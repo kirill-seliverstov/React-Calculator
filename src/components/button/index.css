@@ -1,3 +1,28 @@
-input:focus {
-    color: red;
-}
+.button {
+    display: block;
+  
+    border-radius: 50%;
+    border: none;
+  
+    margin: 10px;
+  
+    width: 75px;
+    height: 75px;
+  
+    color: #fff;
+  
+    font-size: 200%;
+  }
+  
+  .button--number {
+    background-color: #505050;
+  }
+  
+  .button--manipulate {
+    background-color: #d4d4d2;
+  }
+  
+  .button--operation {
+    background-color: #ff9500;
+  }
+  

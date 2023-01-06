@@ -1,13 +1,15 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import "./index.css";
 
-export const Button = ({ value, onClick, bg, className }) => {
+export const Button = ({ value, onClick, id, className, text }) => {
   return (
-    <input
+    <button
       className={"button " + className}
-      type={"button"}
       value={value}
       onClick={onClick}
-    />
+      id={id}
+    >
+      {text}
+    </button>
   );
 };

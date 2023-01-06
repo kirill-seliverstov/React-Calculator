@@ -1,57 +1,112 @@
 html {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    font-size: 0.75rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 0.75rem;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+
+  display: flex;
+  justify-content: center;
+}
+
+.calculator {
+  width: 50vh;
+
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr;
+  grid-template-rows: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
+  grid-template-areas:
+    "history history history history"
+    "current current current current"
+    "clear set-negative percent divide"
+    "seven eight nine minus"
+    "four five six plus"
+    "one two three multi"
+    "zero zero dot equal";
+}
+
+#percent {
+  grid-area: percent;
+}
+#history {
+  max-width: 100%;
+  grid-area: history;
+
+  text-align: end;
+
+  font-size: 150%;
+  color: #444444;
+}
+
+#current {
+  text-align: end;
+
+  font-size: 300%;
+
+  grid-area: current;
+}
+
+#clear {
+  grid-area: clear;
+}
+
+#divide {
+  grid-area: divide;
+}
+#multi {
+  grid-area: multi;
+}
+#plus {
+  grid-area: plus;
+}
+#minus {
+  grid-area: minus;
+}
+#seven {
+  grid-area: seven;
+}
+#eight {
+  grid-area: eight;
+}
+#nine {
+  grid-area: nine;
+}
+#four {
+  grid-area: four;
+}
+#five {
+  grid-area: five;
+}
+#three {
+  grid-area: three;
+}
+#two {
+  grid-area: two;
+}
+#one {
+  grid-area: one;
+}
+#set-negative {
+  grid-area: set-negative;
+}
+#zero {
+  grid-area: zero;
+}
+#equal {
+  grid-area: equal;
+}
+#six {
+  grid-area: six;
+}
+
+@media screen and (max-width: 450px) {
+  html {
+    font-size: 0.6rem;
   }
-  
-  body {
-    background-color: #000;
-    color: #fff;
-  
-    margin-left: auto;
-    margin-right: auto;
-  
-    width: 50%;
+  .calculator {
+    width: 40vh;
   }
-  
-  .calculator__history {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .history__current {
-    align-self: flex-end;
-  
-    font-size: 300%;
-  }
-  
-  .calculator__wrapper {
-    display: grid;
-  }
-  
-  .calculator__manipulations {
-    grid-area: 1 / 1 / 1 / 3;
-  
-    display: grid;
-    grid-template-columns: 100px 100px 100px;
-    grid-gap: 10px;
-  }
-  
-  .calculator__numbers {
-    display: grid;
-    grid-template-columns: 100px 100px 100px;
-    grid-gap: 10px;
-  
-    text-align: center;
-  }
-  
-  .calculator__operations {
-    grid-area: 3 / 3 / 1 / 120;
-  
-    display: grid;
-    grid-template-rows: 100px 100px 100px 100px;
-    grid-gap: 10px;
-  
-    text-align: center;
-  }
-  
+}

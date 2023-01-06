@@ -7,10 +7,125 @@ function App() {
   const [current, setCurrent] = useState("0");
   const [expression, setExpression] = useState([]);
   const [result, setResult] = useState("");
+  const [flag, setFlag] = useState(false); // flag to check if result is displayed
 
-  const numbersButtons = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0];
-  const operationsButtons = ["+", "-", "*", "/", "="];
+  const numbersButtons = [
+    {
+      value: "7",
+      id: "seven"
+    },
+    {
+      value: "8",
+      id: "eight"
+    },
+    {
+      value: "9",
+      id: "nine"
+    },
+    {
+      value: "4",
+      id: "four"
+    },
+    {
+      value: "5",
+      id: "five"
+    },
+    {
+      value: "6",
+      id: "six"
+    },
+    {
+      value: "1",
+      id: "one"
+    },
+    {
+      value: "2",
+      id: "two"
+    },
+    {
+      value: "3",
+      id: "three"
+    },
+    {
+      value: "0",
+      id: "zero"
+    }
+  ];
 
+  const operationsButtons = [
+    {
+      value: "+",
+      id: "plus",
+      text: "+"
+    },
+    {
+      value: "-",
+      id: "minus",
+      text: "-"
+    },
+    {
+      value: "*",
+      id: "multi",
+      text: "×"
+    },
+    {
+      value: "/",
+      id: "divide",
+      text: "÷"
+    },
+    {
+      value: "=",
+      id: "equal",
+      text: "="
+    }
+  ];
+
+  const manipulationButtons = [
+    {
+      value: "AC",
+      id: "clear",
+      text: "AC",
+      onClick() {
+        setCurrent("0");
+        setHistory("");
+        expression.length = 0;
+        setResult("");
+        setFlag(false);
+      }
+    },
+    {
+      value: "±",
+      id: "set-megative",
+      text: "±",
+      onClick() {
+        +current >= 0
+          ? setCurrent(-Math.abs(+current))
+          : setCurrent(Math.abs(+current));
+      }
+    },
+    {
+      value: "%",
+      id: "percent",
+      text: "%",
+      onClick() {
+        if (isFinite(current)) {
+          setCurrent(current / 100)
+        } else return current;
+      }
+    },
+    {
+      value: ".",
+      id: "dot",
+      text: ".",
+      onClick() {
+        String(numberWithSpaces(current)).includes(".")
+          ? numberWithSpaces(+current)
+          : setCurrent(numberWithSpaces(+current) + ".");
+      }
+    }
+  ];
+
+  // function to solve the equations
   const makeOperation = (expression) => {
     let a = expression[0];
     let op = expression[1];
@@ -24,15 +139,22 @@ function App() {
     }
   };
 
+  // places spaces between thousands, millions etc.
+  const numberWithSpaces = (number) => {
+    let parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return parts.join(".");
+  };
+
+  // operations onClick function
   const handleOperation = (op) => {
-    if (expression.length < 2) {
+    if (expression.length < 2 && op !== "=") {
       expression.push(+current, op);
 
       setHistory((history += current + op));
-      setCurrent("");
-
-      console.log(expression);
-    } else if (expression.length === 2 && op !== "=" && current !== "") {
+      setCurrent(+expression[0]);
+      if (flag === false) setFlag(true);
+    } else if (expression.length === 2 && op !== "=" && !flag) {
       expression.push(+current);
       let expressionResult = makeOperation(expression);
 
@@ -44,9 +166,8 @@ function App() {
       expression.length = 0;
       expression.push(expressionResult, op);
 
-      console.log(expression);
-
-      setCurrent("");
+      setCurrent(expressionResult);
+      if (flag === false) setFlag(true);
     } else if (expression.length === 2 && op === "=" && current !== "") {
       expression.push(+current);
       let expressionResult = makeOperation(expression);
@@ -56,91 +177,77 @@ function App() {
       setCurrent(expressionResult);
 
       expression.length = 0;
-    } else if (expression.length === 2 && current === "") {
+      setFlag(true);
+    } else if (expression.length === 2 && op === "=" && current === "") {
+      setHistory("");
+      setCurrent(expression[0]);
+      expression.length = 0;
+    } else if (expression.length === 2 && flag) {
       setHistory(history.replace(/.$/, op));
       expression[1] = op;
-      console.log(expression);
     }
   };
 
-  // каждая кнопка смотрит, есть ли в массиве число и операция, если да, кнопка
-  //  выполняет операцию в массиве с лежащим в нем числом и current
-  // смотреть есть ли операция в массиве и чуть что менять ее
-  // флаг который когда на операцию true, если тру и жмем на цифру - фалсе
-
   return (
     <div className="calculator">
-      <div>
-        <div className="calculator__history">
-          <p>history: {history}</p>
-          <p className="history__current">{current}</p>
-        </div>
-      </div>
+      <p id="history">{history}</p>
+      <p className="history__current" id="current">
+        {numberWithSpaces(+current)}
+      </p>
 
-      <div className="calculator__wrapper">
-        <div className="calculator__manipulations">
+      {manipulationButtons.map((val) => {
+        return (
           <Button
+            key={val.id}
+            value={val.value}
+            id={val.id}
+            text={val.text}
+            onClick={val.onClick}
             className={"button--manipulate"}
-            value={"AC"}
-            onClick={() => {
-              setCurrent("0");
+          />
+        );
+      })}
+
+      {numbersButtons.map((num) => {
+        return (
+          <Button
+            key={num.id}
+            value={num.value}
+            id={num.id}
+            text={num.value}
+            className={"button--number"}
+            onClick={(e) => {
+              if (String(current).length < 15) {
+                if (+current === 0 && current !== "0.") {
+                  setCurrent(e.target.value);
+                } else if (flag) {
+                  setCurrent(e.target.value);
+                  setFlag(false);
+                } else setCurrent(current + e.target.value);
+              } else setCurrent(e.target.value);
             }}
           />
+        );
+      })}
 
+      {operationsButtons.map((op) => {
+        return (
           <Button
-            className={"button--manipulate"}
-            value={"±"}
-            onClick={() =>
-              +current >= 0
-                ? setCurrent(-Math.abs(+current))
-                : setCurrent(Math.abs(+current))
-            }
-          />
-
-          <Button
-            className={"button--manipulate"}
-            value={"%"}
-            onClick={() => {
-              isFinite(current) ? setCurrent(current / 100) : current;
+            key={op.id}
+            value={op.value}
+            id={op.id}
+            text={op.text}
+            className={"button--operation"}
+            onClick={(e) => {
+              handleOperation(e.target.value);
             }}
           />
-        </div>
+        );
+      })}
 
-        <div className="calculator__numbers">
-          {numbersButtons.map((num) => {
-            return (
-              <Button
-                key={num}
-                value={num}
-                className={"button--number"}
-                onClick={(e) => {
-                  if (+current === 0 && current !== "0.") {
-                    setCurrent(e.target.value);
-                  } else setCurrent(current + e.target.value);
-                }}
-              />
-            );
-          })}
-        </div>
-
-        <div className="calculator__operations">
-          {operationsButtons.map((op) => {
-            return (
-              <Button
-                key={op}
-                value={op}
-                className={"button--operation"}
-                onClick={(e) => {
-                  handleOperation(e.target.value);
-                }}
-              />
-            );
-          })}
-        </div>
-      </div>
-
-      <p>expression: {expression.join(" ")}</p>
+      {/* <p>expression: {expression.join(" ")}</p>
       <p>result: {result}</p>
+      <p>flag: {String(flag)}</p> */}
     </div>
   );
 }
